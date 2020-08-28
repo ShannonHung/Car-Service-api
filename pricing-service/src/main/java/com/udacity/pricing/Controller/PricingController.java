@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 @RestController
+@RequestMapping("/services/price")
 public class PricingController {
     private PricingService pricingService;
 
@@ -23,14 +24,14 @@ public class PricingController {
         this.pricingService=pricingService;
     }
 
-    @GetMapping("services/price")
-    public ResponseEntity<List<Price>> getAllPrices(){
-        List<Price> list = pricingService.retrievePricings();
-        return new ResponseEntity<List<Price>>(list, HttpStatus.OK);
-    }
+//    @GetMapping("services/price")
+//    public ResponseEntity<List<Price>> getAllPrices(){
+//        List<Price> list = pricingService.retrievePricings();
+//        return new ResponseEntity<List<Price>>(list, HttpStatus.OK);
+//    }
 
-    @RequestMapping(value = "services/pricing/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Price> getVehicleById(@PathVariable("id") Long vehicleId) {
+    @GetMapping
+    public ResponseEntity<Price> getVehicleById(@RequestParam Long vehicleId) {
         System.out.println("vehicleId:" + vehicleId);
         Price price = pricingService.retrieveVehicleById(vehicleId);
         return new ResponseEntity<Price>(price, HttpStatus.OK);

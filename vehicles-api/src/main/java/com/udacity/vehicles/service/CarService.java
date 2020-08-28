@@ -1,8 +1,13 @@
 package com.udacity.vehicles.service;
 
+import com.udacity.vehicles.client.maps.MapsClient;
+import com.udacity.vehicles.client.prices.PriceClient;
+import com.udacity.vehicles.domain.Location;
 import com.udacity.vehicles.domain.car.Car;
 import com.udacity.vehicles.domain.car.CarRepository;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,12 +19,17 @@ import org.springframework.stereotype.Service;
 public class CarService {
 
     private final CarRepository repository;
+    private PriceClient priceClient;
+    private MapsClient mapsClient;
 
-    public CarService(CarRepository repository) {
+    public CarService(CarRepository repository, PriceClient priceClient, MapsClient mapsClient) {
         /**
          * TODO: Add the Maps and Pricing Web Clients you create
          *   in `VehiclesApiApplication` as arguments and set them here.
          */
+        this.mapsClient = mapsClient;
+        this.priceClient = priceClient;
+
         this.repository = repository;
     }
 
@@ -43,6 +53,12 @@ public class CarService {
          *   Remove the below code as part of your implementation.
          */
         Car car = new Car();
+        Optional<Car> optionalCar = repository.findById(id);
+        if(optionalCar.isPresent()){
+            car = optionalCar.get();
+        }else{
+            throw  new CarNotFoundException("car not found");
+        }
 
         /**
          * TODO: Use the Pricing Web client you create in `VehiclesApiApplication`
@@ -51,7 +67,7 @@ public class CarService {
          * Note: The car class file uses @transient, meaning you will need to call
          *   the pricing service each time to get the price.
          */
-
+        car.setPrice(priceClient.getPrice(id));
 
         /**
          * TODO: Use the Maps Web client you create in `VehiclesApiApplication`
@@ -61,6 +77,7 @@ public class CarService {
          * Note: The Location class file also uses @transient for the address,
          * meaning the Maps service needs to be called each time for the address.
          */
+        car.setLocation(mapsClient.getAddress(car.getLocation()));
 
 
         return car;
@@ -73,14 +90,15 @@ public class CarService {
      */
     public Car save(Car car) {
         if (car.getId() != null) {
+
             return repository.findById(car.getId())
                     .map(carToBeUpdated -> {
                         carToBeUpdated.setDetails(car.getDetails());
                         carToBeUpdated.setLocation(car.getLocation());
+                        carToBeUpdated.setCondition(car.getCondition());
                         return repository.save(carToBeUpdated);
                     }).orElseThrow(CarNotFoundException::new);
         }
-
         return repository.save(car);
     }
 
@@ -93,12 +111,24 @@ public class CarService {
          * TODO: Find the car by ID from the `repository` if it exists.
          *   If it does not exist, throw a CarNotFoundException
          */
-
+        Optional<Car> optionalCar = repository.findById(id);
+        Car car;
+        if(optionalCar.isPresent()){
+            car = optionalCar.get();
+        }else{
+            throw new CarNotFoundException("Not Found Car");
+        }
 
         /**
          * TODO: Delete the car from the repository.
          */
+        repository.delete(car);
 
-
+    }
+    public String findPrice(Long id){
+        return priceClient.getPrice(id);
+    }
+    public Location findLocation(Location location){
+        return mapsClient.getAddress(location);
     }
 }

@@ -1,15 +1,22 @@
 package com.udacity.vehicles;
 
+import com.udacity.vehicles.client.prices.Price;
 import com.udacity.vehicles.domain.manufacturer.Manufacturer;
 import com.udacity.vehicles.domain.manufacturer.ManufacturerRepository;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+import java.util.*;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import reactor.core.publisher.Mono;
 
 /**
  * Launches a Spring Boot application for the Vehicles API,
@@ -19,6 +26,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @SpringBootApplication
 @EnableJpaAuditing
 public class VehiclesApiApplication {
+    private static final Logger log = LoggerFactory.getLogger(VehiclesApiApplication.class);
 
     public static void main(String[] args) {
         SpringApplication.run(VehiclesApiApplication.class, args);
@@ -45,6 +53,21 @@ public class VehiclesApiApplication {
         return new ModelMapper();
     }
 
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder){
+        return builder.build();
+    }
+
+    @Bean
+    public CommandLineRunner run(RestTemplate restTemplate) throws Exception{
+        return args -> {
+            Price price = restTemplate.getForObject(
+                    "http://localhost:8082/prices/1", Price.class
+            );
+            log.info("shannon" + price.toString());
+        };
+    }
+
     /**
      * Web Client for the maps (location) API
      * @param endpoint where to communicate for the maps API
@@ -62,7 +85,9 @@ public class VehiclesApiApplication {
      */
     @Bean(name="pricing")
     public WebClient webClientPricing(@Value("${pricing.endpoint}") String endpoint) {
+        System.out.println("endpoint: "+ endpoint);
         return WebClient.create(endpoint);
     }
+
 
 }
