@@ -18,6 +18,7 @@ The project requires the use of Maven and Spring Boot, along with Java v11.
 
 ## 如果發現Swagger的post沒辦法過
 試試看這個，原因是不要加id, manufacturer要存在才可以
+```json
 {
   "condition": "NEW",
   "details": {
@@ -40,3 +41,4 @@ The project requires the use of Maven and Spring Boot, along with Java v11.
     "lon": 83.456
   }
 }
+```
