@@ -67,6 +67,7 @@ public class CarService {
          * Note: The car class file uses @transient, meaning you will need to call
          *   the pricing service each time to get the price.
          */
+        System.out.println("priceClient.getPrice(id): " + id + "=" + priceClient.getPrice(id));
         car.setPrice(priceClient.getPrice(id));
 
         /**
@@ -78,6 +79,7 @@ public class CarService {
          * meaning the Maps service needs to be called each time for the address.
          */
         car.setLocation(mapsClient.getAddress(car.getLocation()));
+        System.out.println("mapsClient.getAddress(car.getLocation()): " + id + "=" + car.getLocation());
 
 
         return car;
@@ -91,11 +93,19 @@ public class CarService {
     public Car save(Car car) {
         if (car.getId() != null) {
 
+//            return repository.findById(car.getId())
+//                    .map(carToBeUpdated -> {
+//                        carToBeUpdated.setDetails(car.getDetails());
+//                        carToBeUpdated.setLocation(car.getLocation());
+//                        carToBeUpdated.setCondition(car.getCondition());
+//                        return repository.save(carToBeUpdated);
+//                    }).orElseThrow(CarNotFoundException::new);
             return repository.findById(car.getId())
                     .map(carToBeUpdated -> {
                         carToBeUpdated.setDetails(car.getDetails());
-                        carToBeUpdated.setLocation(car.getLocation());
+                        carToBeUpdated.setLocation(mapsClient.getAddress(car.getLocation()));
                         carToBeUpdated.setCondition(car.getCondition());
+                        carToBeUpdated.setPrice(priceClient.getPrice(car.getId()));
                         return repository.save(carToBeUpdated);
                     }).orElseThrow(CarNotFoundException::new);
         }

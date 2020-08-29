@@ -37,7 +37,7 @@ public class PricingServiceApplicationTests {
 
 	@Test
 	public void contextLoads() throws Exception {
-			mockMvc.perform(get("/services/price"))
+			mockMvc.perform(get("/services/price/allprice"))
 					.andExpect(status().isOk())
 					.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 					.andExpect(content().json("[]"));
@@ -46,7 +46,7 @@ public class PricingServiceApplicationTests {
 	@Test
 	public void getVehicleById() throws Exception {
 		//使用perform()去模擬Call getRequest
-		mockMvc.perform(get("/services/pricing/1"))
+		mockMvc.perform(get("/services/price?vehicleId=1"))
 				.andExpect(status().isOk());
 
 		verify(pricingService, times(1)).retrieveVehicleById(Long.valueOf(1));

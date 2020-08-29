@@ -10,8 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.PathParam;
-import java.math.BigDecimal;
 import java.util.*;
 
 @RestController
@@ -24,11 +22,11 @@ public class PricingController {
         this.pricingService=pricingService;
     }
 
-//    @GetMapping("services/price")
-//    public ResponseEntity<List<Price>> getAllPrices(){
-//        List<Price> list = pricingService.retrievePricings();
-//        return new ResponseEntity<List<Price>>(list, HttpStatus.OK);
-//    }
+    @GetMapping("/allprice")
+    public ResponseEntity<List<Price>> getAllPrices(){
+        List<Price> list = pricingService.retrievePricings();
+        return new ResponseEntity<List<Price>>(list, HttpStatus.OK);
+    }
 
     @GetMapping
     public ResponseEntity<Price> getVehicleById(@RequestParam Long vehicleId) {

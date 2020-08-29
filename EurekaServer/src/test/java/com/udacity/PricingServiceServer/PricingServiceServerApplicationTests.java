@@ -14,20 +14,10 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 class PricingServiceServerApplicationTests {
-	@Autowired
-	private MockMvc mockMvc;
-
 	@Test
 	void contextLoads() throws Exception {
-		mockMvc.perform(get("/pricing"))
-				.andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(content().json("[]"));
-
-
 	}
 
 }
